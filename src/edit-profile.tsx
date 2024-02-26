@@ -20,14 +20,18 @@ import Alert from '@mui/material/Alert';
 import { SectorsDropDown } from "./SectorsDropDown";
 import {CapabilitiesDropdown} from"./CapabilitiesDropDown";
 import { LanguageDropdown } from "./LanguageDropDown";
-import Select from 'react-select';
+// import Select from 'react-select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+
 /**
  * React Component
  */
 // const url ="https://myfgs-staffbase-storyblok-proxy-6nar3kdwr-fgh-global.vercel.app/api/";
 
 // const url ="https://myfgs-staffbase-storyblok-proxy-6nar3kdwr-fgh-global.vercel.app/api/";
-const url ="https://myfgs-staffbase-storyblok-proxy-negguu7em-fgh-global.vercel.app/api/";
+const url ="https://myfgs-staffbase-storyblok-proxy-hpageu8h9-fgh-global.vercel.app/api/";
 
 
 /**
@@ -72,7 +76,11 @@ export const EditProfile = ({ widgetApi }: EditProfileProps): ReactElement | nul
 //   { value: 'he', label: 'He' },
 //   { value: 'him', label: 'Him' },
 // ]}
+const [pronounsSelect, setPronounsSelect] = React.useState('');
 
+  const handleChangePronouns = (event: SelectChangeEvent) => {
+    setPronounsSelect(event.target.value);
+  };
   const {
     // control,
     register,
@@ -234,8 +242,9 @@ export const EditProfile = ({ widgetApi }: EditProfileProps): ReactElement | nul
     .request(config)
     .then((response) => {
       const user  = response.data.data
-      console.log("ussss" , user)
+      console.log("ussss" , user?.storyblokResolves?.pronouns)
       setLoader(false);
+      setPronounsSelect(user?.storyblokResolves?.pronouns)
       var loc="";
       if(user?.storyblokResolves?.location.length > 0){
         let l=Object.values(user?.storyblokResolves?.location);
@@ -321,6 +330,8 @@ export const EditProfile = ({ widgetApi }: EditProfileProps): ReactElement | nul
     const token = `${checkDirectoryAuthToken}`
     const newToken = token.replace(/^"|"$/g, "");
     let data:any = e;
+    // console.log("data?.target?.pronouns?" , data?.target?.pronouns.value)
+    // return;
     
     // console.log("data?.target?.full_bio?.value" , data?.target?.full_bio?.value.replace(/\s{3,}/, '\n'))
     // return
@@ -705,65 +716,27 @@ export const EditProfile = ({ widgetApi }: EditProfileProps): ReactElement | nul
            Pronouns
          </label>
 
-        {/* { singledataupdate &&  <Controller
-           control={control}
-           defaultValue={["he"]}
-           se
-          {...register("pronouns", { required: false })}
-           render={({ field: { value, onChange } }) => (
-         <Select options={[
-           { value: 'he', label: 'He' },
-           { value: 'him', label: 'Him' },
-         ]}
-          />
-          )}
-          />
-        } */}
+      
 
-         
-         {/* <Select options={[
-           { value: 'he', label: 'He' },
-           { value: 'him', label: 'Him' },
-         ]}
-          /> */}
+{singledataupdate && <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <Select
+           style={{ width: "80%", fontSize: "15px",marginTop:20 }}
+           {...register("pronouns", { required: false })}
+          labelId="demo-simple-select-standard-label"
+          id="demo-simple-select-standard"
+          className="single-pronouns-select"
+          value={pronounsSelect}
+          // value={filterAttr?.storyblokResolves?.pronouns}
 
-            {/* <Controller
-           control={control}
-           name="practice_area"
-           rules={{ required: true }}
-           render={({ field: { value, onChange } }) => (
-             <Multiselect
-             className="edit-profile-multi-select"
-               options={practice_area}
-               isObject={false}
-               showCheckbox={true}
-               hidePlaceholder={true}
-               closeOnSelect={false}
-               onSelect={onChange}
-               onRemove={onChange}
-               selectedValues={value}
-             />
-           )}
-         /> */}
+          onChange={handleChangePronouns}
+        >
+          <MenuItem value={""}>Select</MenuItem>
+          <MenuItem value={"He/Him"}>He/Him</MenuItem>
+          <MenuItem value={"She/Her"}>She/Her</MenuItem>
+          <MenuItem value={"They/Them"}>They/Them</MenuItem>
+        </Select>
+      </FormControl>}
 
-
-
-
-         
-         
-{singledataupdate &&        <select 
-     style={{ width: "100%", fontSize: "15px",marginTop:20 }}
-     defaultValue={filterAttr?.storyblokResolves?.pronouns}
-     {...register("pronouns", { required: false })}
-     className={`select-pronouns`}>
-     <option value="">Select</option>
-     <option value="He/Him">He/Him</option>
-     <option value="She/Her">She/Her</option>
-     <option value="They/Them">They/Them</option>
-
-
-   </select>}
-       
          {errors.pronouns && (
            <p className="edit-profile-error">Please select practice area</p>
          )}
